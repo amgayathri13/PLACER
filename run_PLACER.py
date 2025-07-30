@@ -268,6 +268,7 @@ if __name__ == "__main__":
                            "'atom_id': [atom names],\n"
                            "'leaving': [True/False for whether this atom is deleted when part of polymer],\n"
                            "'pdbx_align': [empty list]}}")
+    argparser.add_argument('--maxatoms', type=int, required=False, default=None, help='Override the maximum number of heavy atoms in the crop region (default is 600, increase for large CDR/epitope modeling).')
     argparser.add_argument('--ligand_file', type=str, nargs="+", help='SDF or MOL2 file of the ligand(s). (Input format: XXX:ligand1.sdf YYY:ligand2.mol2) ZZZ:CCD\n '
                                                                   'Used for refining the atom typing and connectivity in the ligand structures. '
                                                                   'Coordinates are still parsed form the input PDB/mmCIF. If ligand exists in CCD then ZZZ:CCD is a special input that enables reading the ligand in from an internal CCD ligands database.')
