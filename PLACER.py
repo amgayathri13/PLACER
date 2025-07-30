@@ -55,7 +55,7 @@ class PLACER():
         print(f"Using checkpoint: {self.__checkpoint}")
         chk = torch.load(self.__checkpoint, map_location=self.__device)
         self.__params = chk["params"]
-
+        self.__params['DATALOADER']['featurizer']['maxatoms'] = 1200
         self.__DataLoader = dataloader.PDBDataset(csv = f'{DIR}/data/test.csv',  # mock dataset for inference
                                            ncpu = NPROC, world_size=1, rank=0,
                                            params=self.__params['DATALOADER']['featurizer'])
