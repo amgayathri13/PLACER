@@ -108,7 +108,7 @@ def parse_fixed_ligand_input(input_object, chains):
     # (chain, name3, resno) - ligand in this chain with this name and residue number will be fixed/predicted.
     ligands_in_chains = []
     for ch in chains:
-        if chains[ch].type == "nonpoly":  # currently not supporting fixing side chains
+        if chains[ch].type == "nonpoly" or ch in input_object.poly_ligand_chains():  # currently not supporting fixing side chains # Modify this line to check for user-specified polymer chains
             ligands_in_chains += list(set([(ch, at[2], int(at[1])) for at in chains[ch].atoms]))  # (str, str, int) // (chain, name3, resno)
 
     fixed_ligands = []
