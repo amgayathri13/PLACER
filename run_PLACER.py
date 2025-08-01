@@ -69,6 +69,9 @@ def main(args):
 
     if args.use_sm is False:
         placer_input.exclude_sm(True)
+
+    if args.poly_ligand_chains is not None:
+        placer_input.poly_ligand_chains(args.poly_ligand_chains)
     
     if args.fixed_ligand_noise is not None:
         placer_input.fixed_ligand_noise(args.fixed_ligand_noise)
@@ -275,6 +278,7 @@ if __name__ == "__main__":
     argparser.add_argument('--ignore_ligand_hydrogens', action='store_true', default=False, help='Affects --ligand_file. Ignores hydrogen atoms that are defined in the PDB and SDF/MOL2 files, and will not throw errors if the protonation states are different. Hydrogen atoms are not predicted with PLACER anyway.')
     argparser.add_argument('--use_sm', action='store_true',default=True, help='make predictions with the small molecule (holo - turned on by default)')
     argparser.add_argument('--no-use_sm', dest='use_sm', action='store_false', default=False,help='make predictions w/o the small molecule (apo)')
+    argparser.add_argument('--poly-ligand-chains', nargs='+', default=None, help="Chain IDs (e.g. H L) to treat as polymeric ligands for CDR loop optimization")
     argparser.set_defaults(use_sm=True)
     args = argparser.parse_args()
     if args.idir is None and args.ifile is None:
