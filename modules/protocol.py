@@ -99,18 +99,78 @@ def parse_input_structure(input_object, ligand_reference, pdbparser, cifparser):
     return chains, obmol
 
 
-def parse_fixed_ligand_input(input_object, chains):
+#def parse_fixed_ligand_input(input_object, chains):
     ### Parsing user choices about fixed ligands and to-be-prediced ligands ###
     # Ligand can be defined in 3 ways:
     # name3 - all ligands with this name will be fixed/predicted
     # (name3, resno) - ligands with this name and residue number will be fixed/predicted.
     #                  If there are multiple chains with the same residue numbering then all copies of the ligand will be fixed/predicted.
     # (chain, name3, resno) - ligand in this chain with this name and residue number will be fixed/predicted.
+    #ligands_in_chains = []
+    #for ch in chains:
+    #    if chains[ch].type == "nonpoly" or ch in input_object.poly_ligand_chains():  # currently not supporting fixing side chains # Modify this line to check for user-specified polymer chains
+    #        ligands_in_chains += list(set([(ch, at[2], int(at[1])) for at in chains[ch].atoms]))  # (str, str, int) // (chain, name3, resno)
+
+    #fixed_ligands = []
+    #if input_object.predict_ligand() is not None:
+        ## Predicting only selected ligand. Everything else is fixed.
+     #   for lig in ligands_in_chains:
+      #      if lig[1] in input_object.predict_ligand():  # name3
+       #         continue
+        #    elif (lig[1], lig[2]) in input_object.predict_ligand():  # (name3, resno)
+         #       continue
+          #  elif lig[0] in input_object.predict_ligand():  # chain
+           #     continue
+            #elif lig in input_object.predict_ligand():  # (chain, name3, resno)
+             #   continue
+           # fixed_ligands.append(lig)
+
+    #elif input_object.fixed_ligand() is not None:
+        ## Fixing selected ligand(s). Everything else is predicted.
+        #for lig in ligands_in_chains:
+        #    if lig[1] in input_object.fixed_ligand():
+          #      fixed_ligands.append(lig)
+         #   elif (lig[1], lig[2]) in input_object.fixed_ligand():
+         #       fixed_ligands.append(lig)
+         #   elif lig in input_object.fixed_ligand():
+         #       fixed_ligands.append(lig)
+   # return ligands_in_chains, fixed_ligands
+
+def parse_fixed_ligand_input(input_object, chains):
+    """
+    Parses user choices about fixed ligands and to-be-prediced ligands
+    """
     ligands_in_chains = []
     for ch in chains:
-        if chains[ch].type == "nonpoly" or ch in input_object.poly_ligand_chains():  # currently not supporting fixing side chains # Modify this line to check for user-specified polymer chains
+        # Normal nonpoly chains (original behavior)
+        if chains[ch].type == "nonpoly":  # currently not supporting fixing side chains
             ligands_in_chains += list(set([(ch, at[2], int(at[1])) for at in chains[ch].atoms]))  # (str, str, int) // (chain, name3, resno)
+            
+        # Antibody chains with CDR definitions
+        elif hasattr(input_object, 'poly_ligand_chains') and \
+             ch in input_object.poly_ligand_chains() and \
+             hasattr(input_object, 'cdr_residues') and \
+             input_object.cdr_residues() and \
+             ch in input_object.cdr_residues():
+            cdr_res_nums = input_object.cdr_residues()[ch]
+            cdr_atoms = []
+            for at in chains[ch].atoms:
+                try:
+                    res_num = int(at[1])
+                    if res_num in cdr_res_nums:
+                        cdr_atoms.append((ch, at[2], res_num))
+                except ValueError:
+                    continue
+            
+            ligands_in_chains += list(set(cdr_atoms))
+            print(f"Added {len(set([a[2] for a in cdr_atoms]))} CDR residues from chain {ch} as ligands")
+        
+        # Handle case where chain is flagged as ligand but no CDR definition
+        elif hasattr(input_object, 'poly_ligand_chains') and ch in input_object.poly_ligand_chains():
+            print(f"Warning: Chain {ch} marked as ligand but no CDR definitions found. Adding entire chain.")
+            ligands_in_chains += list(set([(ch, at[2], int(at[1])) for at in chains[ch].atoms]))
 
+    # fixing
     fixed_ligands = []
     if input_object.predict_ligand() is not None:
         ## Predicting only selected ligand. Everything else is fixed.
@@ -135,7 +195,6 @@ def parse_fixed_ligand_input(input_object, chains):
             elif lig in input_object.fixed_ligand():
                 fixed_ligands.append(lig)
     return ligands_in_chains, fixed_ligands
-
 
 def build_crop(dataloader, input_object, chains, obmol, fixed_ligands):
     """
