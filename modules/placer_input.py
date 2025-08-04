@@ -93,13 +93,13 @@ class PLACERinput():
             assert isinstance(noise, float)
             self.__fixed_ligand_noise = noise
 
-    def poly_ligand_chains(self, chains=None):
-        """Getter / setter for polymeric chains to be treated as ligands"""
-        if chains is None:
-            return self._poly_ligand_chains
-        assert isinstance(chains, (list, tuple))
-        self._poly_ligand_chains = chains
-        return self
+   # def poly_ligand_chains(self, chains=None):
+   #     """Getter / setter for polymeric chains to be treated as ligands"""
+   #     if chains is None:
+   #         return self._poly_ligand_chains
+   #     assert isinstance(chains, (list, tuple))
+   #     self._poly_ligand_chains = chains
+#    return self
 
 
     def bonds(self, bonds=None):
