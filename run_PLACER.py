@@ -76,6 +76,15 @@ def main(args):
     
     if args.fixed_ligand_noise is not None:
         placer_input.fixed_ligand_noise(args.fixed_ligand_noise)
+
+    if args.poly_ligand_chains is not None:
+        placer_input.poly_ligand_chains(args.poly_ligand_chains)
+
+    if args.cdr_file is not None:
+        cdr_def = cdr_utils.parse_cdr_definition(args.cdr_file)
+        placer_input.cdr_residues(cdr_def)
+    if args.idir is None and args.ifile is None:
+        sys.exit('Error: One of -i/--idir or -f/--ifile must be provided.')
     
     def evaluate_pred_fix_ligand_input(ligands):
         fixed_ligands = []
@@ -284,13 +293,6 @@ if __name__ == "__main__":
     argparser.add_argument('--cdr-file', type=str, help="File defining CDR residue numbers for each chain (format: 'chain:res1,res2,...')")
     args = argparser.parse_args()
 
-    if args.poly_ligand_chains is not None:
-        placer_input.poly_ligand_chains(args.poly_ligand_chains)
 
-    if args.cdr_file is not None:
-        cdr_def = cdr_utils.parse_cdr_definition(args.cdr_file)
-        placer_input.cdr_residues(cdr_def)
-    if args.idir is None and args.ifile is None:
-        sys.exit('Error: One of -i/--idir or -f/--ifile must be provided.')
 
     main(args)
