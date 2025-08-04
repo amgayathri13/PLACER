@@ -369,21 +369,19 @@ class PLACERinput():
             getattr(self, k)(v)
 
     def poly_ligand_chains(self, chains=None):
-    """Getter / setter for polymeric chains to be treated as ligands"""
-    if chains is None:
-        return self._poly_ligand_chains
-    assert isinstance(chains, (list, tuple))
-    self._poly_ligand_chains = chains
-    return self
+        """Getter / setter for polymeric chains to be treated as ligands"""
+        if chains is None:
+            return self._poly_ligand_chains
+        assert isinstance(chains, (list, tuple))
+        self._poly_ligand_chains = chains
+        return self
     
     def cdr_residues(self, residues=None):
-    """Getter / setter for CDR residue definitions
-    residues: dict mapping chain IDs to lists of residue numbers
-    """
-    if residues is None:
-        return self._cdr_residues
-    self._cdr_residues = residues
-    return self
+        """Getter / setter for CDR residue definitions residues: dict mapping chain IDs to lists of residue numbers"""
+        if residues is None:
+            return self._cdr_residues
+        self._cdr_residues = residues
+        return self
 
     def copy(self):
         return copy.deepcopy(self)
