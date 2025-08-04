@@ -20,6 +20,7 @@ class PLACERinput():
         self.__corruption_centers = None
         self.__crop_centers = None
         self.__ignore_hydrogens = False
+        self._cdr_residues = {}
         
         self.__pdb = None
         self.__cif_file = None
