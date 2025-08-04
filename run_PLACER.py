@@ -16,6 +16,7 @@ openbabel.obErrorLog.SetOutputLevel(0)
 DIR = os.path.dirname(__file__)
 sys.path.insert(0, DIR)
 import PLACER
+import modules.cdr_utils as cdr_utils
 
 
 
@@ -278,9 +279,17 @@ if __name__ == "__main__":
     argparser.add_argument('--ignore_ligand_hydrogens', action='store_true', default=False, help='Affects --ligand_file. Ignores hydrogen atoms that are defined in the PDB and SDF/MOL2 files, and will not throw errors if the protonation states are different. Hydrogen atoms are not predicted with PLACER anyway.')
     argparser.add_argument('--use_sm', action='store_true',default=True, help='make predictions with the small molecule (holo - turned on by default)')
     argparser.add_argument('--no-use_sm', dest='use_sm', action='store_false', default=False,help='make predictions w/o the small molecule (apo)')
-    argparser.add_argument('--poly-ligand-chains', nargs='+', default=None, help="Chain IDs (e.g. H L) to treat as polymeric ligands for CDR loop optimization")
     argparser.set_defaults(use_sm=True)
+    argparser.add_argument('--poly-ligand-chains', nargs='+', type=str, help="Chain IDs (e.g. A B) to treat as polymeric ligands for CDR loop optimization")
+    argparser.add_argument('--cdr-file', type=str, help="File defining CDR residue numbers for each chain (format: 'chain:res1,res2,...')")
     args = argparser.parse_args()
+
+    if args.poly_ligand_chains is not None:
+        placer_input.poly_ligand_chains(args.poly_ligand_chains)
+
+    if args.cdr_file is not None:
+        cdr_def = cdr_utils.parse_cdr_definition(args.cdr_file)
+        placer_input.cdr_residues(cdr_def)
     if args.idir is None and args.ifile is None:
         sys.exit('Error: One of -i/--idir or -f/--ifile must be provided.')
 
