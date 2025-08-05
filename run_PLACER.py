@@ -28,6 +28,10 @@ def main(args):
     weightsfile = args.weights
 
     placer = PLACER.PLACER(weightsfile)
+    if args.maxatoms is not None:
+        placer._PLACER__params['DATALOADER']['featurizer']['maxatoms'] = args.maxatoms
+        print(f"Crop size set to: {args.maxatoms}")
+
 
 
     ########################################################
